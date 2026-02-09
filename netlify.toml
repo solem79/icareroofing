@@ -1,0 +1,22 @@
+# netlify.toml - Netlify configuration for iCare Roofing Project
+
+[build]
+  # No build command since this is static HTML/CSS/JS
+  publish = "."  # root folder of your repo
+
+# Edge Functions (if any) live in the functions folder
+[functions]
+  directory = "functions"
+
+# Custom headers for CORS, cache, etc.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "max-age=0, must-revalidate"
+
+# Optional: redirect / fallback (for SPAs, if needed)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
