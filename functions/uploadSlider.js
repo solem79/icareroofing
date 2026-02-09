@@ -1,63 +1,44 @@
-// functions/uploadSlider.js
-const cloudinary = require("cloudinary").v2;
+import formidable from "formidable";
+import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
 
-// Configure Cloudinary using environment variables
+export const config = { api: { bodyParser: false } };
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-exports.handler = async function (event, context) {
-  try {
-    // Only accept POST requests
-    if (event.httpMethod !== "POST") {
-      return {
-        statusCode: 405,
-        body: "Method Not Allowed",
-      };
-    }
-
-    // Parse the request body
-    let body;
-    try {
-      body = JSON.parse(event.body);
-    } catch (err) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "Invalid JSON body" }),
-      };
-    }
-
-    const { base64, title, description } = body;
-
-    if (!base64) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "No base64 image provided" }),
-      };
-    }
-
-    // Upload to Cloudinary
-    const uploadResponse = await cloudinary.uploader.upload(base64, {
-      folder: "slider",
-      resource_type: "auto", // supports images and videos
-    });
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: "Slider uploaded successfully",
-        url: uploadResponse.secure_url,
-        title: title || null,
-        description: description || null,
-      }),
-    };
-  } catch (error) {
-    console.error("Upload error:", error);
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
-    };
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
   }
-};
+
+  const form = new formidable.IncomingForm();
+  form.keepExtensions = true;
+
+  form.parse(req, async (err, fields, files) => {
+    if (err) return res.status(500).json({ error: "Error parsing form data" });
+
+    const file = files.image; // matches frontend input name="image"
+    if (!file) return res.status(400).json({ error: "No file uploaded" });
+
+    try {
+      const result = await cloudinary.uploader.upload(file.filepath, {
+        folder: "icare-slider",
+      });
+      fs.unlinkSync(file.filepath);
+
+      return res.status(200).json({
+        message: "Slider uploaded successfully!",
+        url: result.secure_url,
+        title: fields.title || "",
+        description: fields.description || "",
+      });
+    } catch (uploadErr) {
+      console.error(uploadErr);
+      return res.status(500).json({ error: "Cloudinary upload failed" });
+    }
+  });
+}

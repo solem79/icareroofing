@@ -1,59 +1,50 @@
-// JS/gallery.js
+import formidable from "formidable";
+import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
 
-async function uploadGallery(fileInput, title, description) {
-  const file = fileInput.files[0];
-  if (!file) return alert("Please select a file to upload");
+export const config = { api: { bodyParser: false } };
 
-  const button = document.querySelector("#galleryUploadButton");
-  if (button) button.disabled = true;
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
+export default async function handler(req, res) {
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  reader.onload = async () => {
-    const base64 = reader.result;
+  const form = new formidable.IncomingForm();
+  form.keepExtensions = true;
+  form.multiples = true; // allow multiple files
+
+  form.parse(req, async (err, fields, files) => {
+    if (err) return res.status(500).json({ error: "Error parsing form data" });
+
+    const fileArray = Array.isArray(files.image) ? files.image : [files.image];
+
+    if (!fileArray || !fileArray[0]) return res.status(400).json({ error: "No files uploaded" });
 
     try {
-      const res = await fetch("/.netlify/functions/uploadGallery", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ base64, title, description }),
+      const uploadResults = [];
+
+      for (const file of fileArray) {
+        const result = await cloudinary.uploader.upload(file.filepath, {
+          folder: "icare-gallery",
+        });
+        fs.unlinkSync(file.filepath);
+        uploadResults.push({
+          url: result.secure_url,
+          originalName: file.originalFilename,
+        });
+      }
+
+      return res.status(200).json({
+        message: "Gallery uploaded successfully!",
+        images: uploadResults,
       });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
-
-      alert(data.message);
-      console.log("Uploaded Gallery URL:", data.url);
-
-      // Clear inputs
-      fileInput.value = "";
-      document.getElementById("galleryTitle").value = "";
-      document.getElementById("galleryDesc").value = "";
-
-      // Display uploaded image immediately
-      const container = document.getElementById("galleryContainer");
-      const imgDiv = document.createElement("div");
-      imgDiv.style.marginBottom = "15px";
-
-      imgDiv.innerHTML = `
-        <img src="${data.url}" alt="${data.title}" style="max-width:200px; display:block; margin-bottom:5px;">
-        <strong>${data.title}</strong><br>
-        <em>${data.description}</em>
-      `;
-
-      container.prepend(imgDiv);
-
-    } catch (err) {
-      alert("Error uploading gallery image: " + err.message);
-      console.error(err);
-    } finally {
-      if (button) button.disabled = false;
+    } catch (uploadErr) {
+      console.error(uploadErr);
+      return res.status(500).json({ error: "Cloudinary upload failed" });
     }
-  };
-
-  reader.onerror = () => {
-    alert("Failed to read file");
-    if (button) button.disabled = false;
-  };
+  });
 }

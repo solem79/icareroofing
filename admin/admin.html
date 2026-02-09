@@ -1,28 +1,124 @@
-<h2>Upload New Gallery Image / Video</h2>
-<input type="file" id="galleryFile">
-<input type="text" id="galleryTitle" placeholder="Title">
-<input type="text" id="galleryDesc" placeholder="Description">
-<button id="galleryUploadButton" onclick="uploadGallery(
-  document.getElementById('galleryFile'),
-  document.getElementById('galleryTitle').value,
-  document.getElementById('galleryDesc').value
-)">Upload Gallery Image</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Uploads</title>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f5f8;
+      margin: 0;
+      padding: 2rem;
+    }
 
-<!-- Container to show uploaded gallery images -->
-<div id="galleryContainer" style="margin-top:20px;"></div>
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+    }
 
-<h2>Upload New Slider Image</h2>
-<input type="file" id="sliderFile">
-<input type="text" id="sliderTitle" placeholder="Title">
-<input type="text" id="sliderDesc" placeholder="Description">
-<button id="uploadButton" onclick="uploadSlider(
-  document.getElementById('sliderFile'),
-  document.getElementById('sliderTitle').value,
-  document.getElementById('sliderDesc').value
-)">Upload Slider</button>
+    .upload-section {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      flex: 1 1 400px;
+      max-width: 450px;
+    }
 
-<!-- Container for uploaded sliders -->
-<div id="sliderContainer" style="margin-top:20px;"></div>
+    .upload-section h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #333;
+    }
 
-<script src="../js/gallery.js"></script>
-<script src="../js/slider.js"></script>
+    .form-group {
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+      color: #555;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 0.7rem;
+      background-color: #0077ff;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #005fcc;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 style="text-align:center; margin-bottom:2rem;">Admin Upload Dashboard</h1>
+
+  <div class="container">
+
+    <!-- Slider Upload -->
+    <section class="upload-section">
+      <h2>Upload Slider Image</h2>
+      <form id="sliderForm" onsubmit="event.preventDefault(); uploadSlider('sliderImage', 'sliderTitle', 'sliderDesc')">
+        <div class="form-group">
+          <label for="sliderTitle">Title:</label>
+          <input type="text" id="sliderTitle" placeholder="Enter slider title" required />
+        </div>
+
+        <div class="form-group">
+          <label for="sliderDesc">Description:</label>
+          <textarea id="sliderDesc" placeholder="Enter description" required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="sliderImage">Select Image:</label>
+          <input type="file" id="sliderImage" accept="image/*" required />
+        </div>
+
+        <button type="submit">Upload Slider</button>
+      </form>
+    </section>
+
+    <!-- Gallery Upload -->
+    <section class="upload-section">
+      <h2>Upload Gallery Images</h2>
+      <form id="galleryForm" onsubmit="event.preventDefault(); uploadGallery('galleryImage')">
+        <div class="form-group">
+          <label for="galleryImage">Select Images:</label>
+          <input type="file" id="galleryImage" accept="image/*" multiple required />
+        </div>
+
+        <button type="submit">Upload Gallery</button>
+      </form>
+    </section>
+
+  </div>
+
+  <!-- Include your existing JS files -->
+  <script src="./js/slider.js"></script>
+  <script src="js/gallery.js"></script>
+
+</body>
+</html>
