@@ -1,0 +1,28 @@
+<h2>Upload New Gallery Image / Video</h2>
+<input type="file" id="galleryFile">
+<input type="text" id="galleryTitle" placeholder="Title">
+<input type="text" id="galleryDesc" placeholder="Description">
+<button id="galleryUploadButton" onclick="uploadGallery(
+  document.getElementById('galleryFile'),
+  document.getElementById('galleryTitle').value,
+  document.getElementById('galleryDesc').value
+)">Upload Gallery Image</button>
+
+<!-- Container to show uploaded gallery images -->
+<div id="galleryContainer" style="margin-top:20px;"></div>
+
+<h2>Upload New Slider Image</h2>
+<input type="file" id="sliderFile">
+<input type="text" id="sliderTitle" placeholder="Title">
+<input type="text" id="sliderDesc" placeholder="Description">
+<button id="uploadButton" onclick="uploadSlider(
+  document.getElementById('sliderFile'),
+  document.getElementById('sliderTitle').value,
+  document.getElementById('sliderDesc').value
+)">Upload Slider</button>
+
+<!-- Container for uploaded sliders -->
+<div id="sliderContainer" style="margin-top:20px;"></div>
+
+<script src="../js/gallery.js"></script>
+<script src="../js/slider.js"></script>

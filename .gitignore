@@ -1,0 +1,46 @@
+
+# Local Netlify folder
+# .netlify
+
+# -----------------------------
+# Netlify local files
+# -----------------------------
+.netlify/
+netlify.toml
+
+# -----------------------------
+# Node.js dependencies
+# -----------------------------
+node_modules/
+
+# -----------------------------
+# Environment variables / secrets
+# -----------------------------
+.env
+
+# -----------------------------
+# Logs
+# -----------------------------
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# -----------------------------
+# OS / Editor files
+# -----------------------------
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.tmp
+
+# -----------------------------
+# Build / Dist folders (if any)
+# -----------------------------
+dist/
+build/
+
+# -----------------------------
+# Optional caches
+# -----------------------------
+.cache/
