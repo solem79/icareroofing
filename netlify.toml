@@ -1,7 +1,9 @@
 [build]
-  publish = "."
-  functions = "functions"
-  command = "npm install"
+  publish = "."        # your site root
+  command = ""         # leave empty for static site
+
+[functions]
+  directory = "functions"
 
 [build.environment]
   NETLIFY_USE_YARN = "false"
