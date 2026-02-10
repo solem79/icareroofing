@@ -53,7 +53,14 @@
   <form id="sliderForm" onsubmit="event.preventDefault(); uploadImage('slider', 'sliderImage', 'sliderTitle', 'sliderDesc')">
     <input type="text" id="sliderTitle" placeholder="Slider Title" required />
     <textarea id="sliderDesc" placeholder="Description" required></textarea>
-    <input type="file" id="sliderImage" accept="image/*" required />
+    <input
+      type="file"
+      id="sliderImage"
+      name="image"
+      accept="image/*"
+      required
+    />
+     
     <button type="submit">Upload Slider</button>
   </form>
   <div id="sliderPreview" class="preview-container"></div>
@@ -63,7 +70,15 @@
   <form id="galleryForm" onsubmit="event.preventDefault(); uploadImage('gallery', 'galleryImage', 'galleryTitle', 'galleryDesc')">
     <input type="text" id="galleryTitle" placeholder="Gallery Title" required />
     <textarea id="galleryDesc" placeholder="Description" required></textarea>
-    <input type="file" id="galleryImage" accept="image/*" required />
+    
+    <input
+      type="file"
+      id="sliderImage"
+      name="image"
+      accept="image/*"
+      required
+    />
+    
     <button type="submit">Upload Gallery</button>
   </form>
   <div id="galleryPreview" class="preview-container"></div>
