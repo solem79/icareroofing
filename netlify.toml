@@ -1,6 +1,8 @@
 [build]
   publish = "."
-  command = "npm install && npm run build"
+  functions = "functions"
+  command = "npm install"
 
-[context.production.environment]
-  NODE_VERSION = "24.7.0"
+[build.environment]
+  NETLIFY_USE_YARN = "false"
+  NETLIFY_SKIP_EXTENSIONS = "true"

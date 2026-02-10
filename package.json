@@ -1,25 +1,7 @@
 {
-  "name": "icareproject",
+  "name": "icareroofing",
   "version": "1.0.0",
-  "description": "iCare Roofing Project - Netlify functions for slider and gallery uploads",
-  "main": "index.js",
   "scripts": {
-    "start": "netlify dev"
-  },
-  "dependencies": {
-    "cloudinary": "^2.20.0",
-    "formidable": "^2.2.1"
-  },
-  "engines": {
-    "node": "20.x"
-  },
-  "keywords": [
-    "Netlify",
-    "Cloudinary",
-    "Slider",
-    "Gallery",
-    "File Upload"
-  ],
-  "author": "Your Name",
-  "license": "MIT"
+    "build": "echo Build complete"
+  }
 }
