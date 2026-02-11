@@ -61,8 +61,11 @@
       required
     />
      
-    <button type="submit">Upload Slider</button>
-  </form>
+    <button type="button"
+      onclick="uploadSlider('sliderImage','sliderTitle','sliderDesc')">
+      Upload Slider
+    </button>
+    </form>
   <div id="sliderPreview" class="preview-container"></div>
 
   <!-- Gallery Upload -->
@@ -79,7 +82,10 @@
       required
     />
     
-    <button type="submit">Upload Gallery</button>
+    <button type="button"
+      onclick="uploadGallery('galleryImage','galleryTitle')">
+      Upload Gallery
+    </button>
   </form>
   <div id="galleryPreview" class="preview-container"></div>
 
