@@ -10,14 +10,14 @@ async function uploadSlider(imageId, titleId, descId) {
   }
 
   const formData = new FormData();
-  formData.append("image", fileInput.files[0]);
+  formData.append("image", fileInput.files[0]); // must match function
   formData.append("title", title);
   formData.append("description", description);
 
   try {
     const res = await fetch("/.netlify/functions/uploadImage", {
       method: "POST",
-      body: formData
+      body: formData,
     });
 
     const data = await res.json();
