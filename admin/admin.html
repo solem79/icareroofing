@@ -2,95 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>iCare Admin</title>
+  <title>iCare Admin Panel</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 10px;
-      background-color: #f9f9f9;
-    }
-    h2 { margin-top: 20px; }
-    form {
-      background: #fff;
-      padding: 15px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 5px rgba(0,0,0,0.1);
-    }
-    input, textarea, button {
-      display: block;
-      width: 100%;
-      margin-top: 5px;
-      margin-bottom: 15px;
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-    button {
-      background-color: #0070f3;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #005bb5;
-    }
-    .preview-container img {
-      max-width: 150px;
-      margin: 5px;
-      border-radius: 5px;
-    }
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    form { margin-bottom: 40px; border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; }
+    input[type="text"], textarea, input[type="file"] { width: 100%; padding: 8px; }
+    button { padding: 10px 15px; cursor: pointer; }
   </style>
 </head>
 <body>
 
   <h1>iCare Admin Panel</h1>
 
-  <!-- Slider Upload -->
-  <h2>Upload Slider</h2>
-  <form id="sliderForm" onsubmit="event.preventDefault(); uploadImage('slider', 'sliderImage', 'sliderTitle', 'sliderDesc')">
-    <input type="text" id="sliderTitle" placeholder="Slider Title" required />
-    <textarea id="sliderDesc" placeholder="Description" required></textarea>
-    <input
-      type="file"
-      id="sliderImage"
-      name="image"
-      accept="image/*"
-      required
-    />
-     
-    <button type="button"
-      onclick="uploadSlider('sliderImage','sliderTitle','sliderDesc')">
-      Upload Slider
-    </button>
-    </form>
-  <div id="sliderPreview" class="preview-container"></div>
-
-  <!-- Gallery Upload -->
-  <h2>Upload Gallery Image</h2>
-  <form id="galleryForm" onsubmit="event.preventDefault(); uploadImage('gallery', 'galleryImage', 'galleryTitle', 'galleryDesc')">
-    <input type="text" id="galleryTitle" placeholder="Gallery Title" required />
-    <textarea id="galleryDesc" placeholder="Description" required></textarea>
-    
-    <input
-      type="file"
-      id="sliderImage"
-      name="image"
-      accept="image/*"
-      required
-    />
-    
-    <button type="button"
-      onclick="uploadGallery('galleryImage','galleryTitle')">
-      Upload Gallery
-    </button>
+  <!-- Slider Upload Form -->
+  <form id="sliderForm" onsubmit="event.preventDefault(); uploadSlider('sliderImage','sliderTitle','sliderDesc')">
+    <div class="form-group">
+      <label for="sliderTitle">Title:</label>
+      <input type="text" id="sliderTitle" placeholder="Enter slider title" required />
+    </div>
+  
+    <div class="form-group">
+      <label for="sliderDesc">Description:</label>
+      <textarea id="sliderDesc" placeholder="Enter slider description" required></textarea>
+    </div>
+  
+    <div class="form-group">
+      <label for="sliderImage">Select Image:</label>
+      <input type="file" id="sliderImage" name="image" accept="image/*" required />
+    </div>
+  
+    <button type="submit">Upload Slider</button>
   </form>
-  <div id="galleryPreview" class="preview-container"></div>
-
-  <!-- Upload Script -->
-  <script src="../js/upload.js"></script>
+  
+  <form id="galleryForm" onsubmit="event.preventDefault(); uploadGallery('galleryImage','galleryTitle','galleryDesc')">
+    <div class="form-group">
+      <label for="galleryTitle">Title:</label>
+      <input type="text" id="galleryTitle" placeholder="Enter gallery title" required />
+    </div>
+  
+    <div class="form-group">
+      <label for="galleryDesc">Description:</label>
+      <textarea id="galleryDesc" placeholder="Enter description" required></textarea>
+    </div>
+  
+    <div class="form-group">
+      <label for="galleryImage">Select Image:</label>
+      <input type="file" id="galleryImage" name="image" accept="image/*" required />
+    </div>
+  
+    <button type="submit">Upload Gallery Image</button>
+  </form>
 
 </body>
 </html>
