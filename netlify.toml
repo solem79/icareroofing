@@ -1,7 +1,9 @@
 [build]
-  publish = "."
-  functions = "functions"
+  publish = "."       
   command = "npm install"
+
+[functions]
+  directory = "functions"
 
 [build.environment]
   NETLIFY_USE_YARN = "false"
