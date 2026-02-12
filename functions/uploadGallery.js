@@ -7,10 +7,10 @@ export const config = { api: { bodyParser: false } };
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-export default async function handler(req, res) {
+export default async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -19,26 +19,26 @@ export default async function handler(req, res) {
   form.keepExtensions = true;
 
   form.parse(req, async (err, fields, files) => {
-    if (err) return res.status(500).json({ error: "Error parsing form data" });
+    if (err) return res.status(500).json({ error: "Form error" });
 
-    const file = files.image; // must match frontend input name="image"
-    if (!file) return res.status(400).json({ error: "No file uploaded" });
+    const file = files.image;
+    if (!file) return res.status(400).json({ error: "No image" });
 
     try {
       const result = await cloudinary.uploader.upload(file.filepath, {
-        folder: "icare-gallery",
+        folder: "icare-gallery"
       });
+
       fs.unlinkSync(file.filepath);
 
-      return res.status(200).json({
-        message: "Gallery image uploaded successfully!",
+      res.status(200).json({
+        message: "Uploaded",
         url: result.secure_url,
-        title: fields.title || "",
-        description: fields.description || "",
+        title: fields.title
       });
-    } catch (uploadErr) {
-      console.error(uploadErr);
-      return res.status(500).json({ error: "Cloudinary upload failed" });
+
+    } catch (e) {
+      res.status(500).json({ error: "Upload failed" });
     }
   });
-}
+};

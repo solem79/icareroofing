@@ -1,7 +1,6 @@
 {
-  "name": "icareroofing",
-  "version": "1.0.0",
-  "scripts": {
-    "build": "echo Build complete"
+  "dependencies": {
+    "cloudinary": "^1.41.0",
+    "formidable": "^3.5.1"
   }
 }
