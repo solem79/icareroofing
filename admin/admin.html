@@ -20,30 +20,22 @@
   <h2>Upload Slider</h2>
 
   <form id="sliderForm">
-    <input type="text" id="sliderTitle" placeholder="Title" required>
-    <textarea id="sliderDesc" placeholder="Description" required></textarea>
-  
-    <!-- VERY IMPORTANT -->
-    <input type="file" id="sliderImage" name="image" required>
-  
-    <button type="submit">Upload Slider</button>
+    <input type="file" id="imageInput" multiple />
+    <select id="uploadType">
+      <option value="slider">Slider</option>
+      <option value="gallery">Gallery</option>
+    </select>
+    <div id="previewContainer" style="display:flex; gap:10px; margin-top:10px;"></div>
+    <button id="uploadBtn">Upload Images</button>
+
   </form>
 
   
-  <h2>Upload Gallery</h2>
-
-  <form id="galleryForm">
-    <input type="text" id="galleryTitle" placeholder="Gallery Title" required>
-  
-    <input type="file" id="galleryImage" name="image" required>
-  
-    <button type="submit">Upload Gallery</button>
-  </form>
   
   
-  <script src="../js/upload.js">
     
-  </script>
+  
+  <script src="../js/upload.js"></script>
   
 </body>
 </html>

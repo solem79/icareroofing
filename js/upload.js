@@ -1,56 +1,63 @@
-// SLIDER UPLOAD
-document.getElementById("sliderForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+  const uploadBtn = document.getElementById("uploadBtn");
+  const input = document.getElementById("imageInput");
+  const uploadTypeSelect = document.getElementById("uploadType");
+  const previewContainer = document.getElementById("previewContainer");
 
-  const file = document.getElementById("sliderImage").files[0];
-  const title = document.getElementById("sliderTitle").value;
-  const description = document.getElementById("sliderDesc").value;
-
-  const formData = new FormData();
-  formData.append("image", file);
-  formData.append("title", title);
-  formData.append("description", description);
-
-  try {
-    const res = await fetch("/.netlify/functions/uploadSlider", {
-      method: "POST",
-      body: formData
+  // Convert file to Base64
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (err) => reject(err);
+      reader.readAsDataURL(file);
     });
-
-    const data = await res.json();
-    alert("Slider uploaded!");
-    console.log(data);
-
-  } catch (err) {
-    alert("Upload failed");
-    console.error(err);
   }
-});
 
-
-// GALLERY UPLOAD
-document.getElementById("galleryForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const file = document.getElementById("galleryImage").files[0];
-  const title = document.getElementById("galleryTitle").value;
-
-  const formData = new FormData();
-  formData.append("image", file);
-  formData.append("title", title);
-
-  try {
-    const res = await fetch("/.netlify/functions/uploadGallery", {
-      method: "POST",
-      body: formData
+  // Show preview
+  input.addEventListener("change", () => {
+    previewContainer.innerHTML = ""; // Clear previous previews
+    const files = Array.from(input.files);
+    files.forEach(file => {
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(file);
+      img.style.width = "100px";
+      img.style.height = "100px";
+      img.style.objectFit = "cover";
+      img.style.border = "1px solid #ccc";
+      previewContainer.appendChild(img);
     });
+  });
 
-    const data = await res.json();
-    alert("Gallery uploaded!");
-    console.log(data);
+  uploadBtn.addEventListener("click", async () => {
+    const files = Array.from(input.files);
+    if (!files.length) return alert("Select images first!");
 
-  } catch (err) {
-    alert("Upload failed");
-    console.error(err);
-  }
-});
+    const type = uploadTypeSelect.value; // slider or gallery
+    let payload;
+
+    if (type === "slider") {
+      payload = { image: await fileToBase64(files[0]) };
+    } else {
+      const images = await Promise.all(files.map(fileToBase64));
+      payload = { images };
+    }
+
+    const endpoint = `https://inspiring-alpaca-756667.netlify.app/.netlify/functions/${
+      type === "slider" ? "uploadSlider" : "uploadGallery"
+    }`;
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      console.log(`${type} upload result:`, data);
+      alert(`${type} upload result:\n` + JSON.stringify(data, null, 2));
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Upload failed! Check console for details.");
+    }
+  });

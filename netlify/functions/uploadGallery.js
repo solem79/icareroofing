@@ -1,44 +1,53 @@
-import formidable from "formidable";
+// netlify/functions/uploadGallery.js
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
 
-export const config = { api: { bodyParser: false } };
-
+// Load environment variables
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export default async (req, res) => {
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const form = new formidable.IncomingForm();
-  form.keepExtensions = true;
-
-  form.parse(req, async (err, fields, files) => {
-    if (err) return res.status(500).json({ error: "Form error" });
-
-    const file = files.image;
-    if (!file) return res.status(400).json({ error: "No image" });
-
-    try {
-      const result = await cloudinary.uploader.upload(file.filepath, {
-        folder: "icare-gallery"
-      });
-
-      fs.unlinkSync(file.filepath);
-
-      res.status(200).json({
-        message: "Uploaded",
-        url: result.secure_url,
-        title: fields.title
-      });
-
-    } catch (e) {
-      res.status(500).json({ error: "Upload failed" });
+export const handler = async (event) => {
+  try {
+    if (event.httpMethod !== "POST") {
+      return {
+        statusCode: 405,
+        body: JSON.stringify({ error: "Method Not Allowed" }),
+      };
     }
-  });
+
+    // Parse incoming JSON (expects array of images)
+    const data = JSON.parse(event.body);
+    const { images } = data; // images should be an array of base64 strings or URLs
+
+    if (!images || !Array.isArray(images) || images.length === 0) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "No images provided" }),
+      };
+    }
+
+    // Upload all images to Cloudinary
+    const uploadPromises = images.map((img) =>
+      cloudinary.uploader.upload(img, { folder: "gallery" })
+    );
+    const results = await Promise.all(uploadPromises);
+
+    const urls = results.map((res) => res.secure_url);
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        success: true,
+        urls,
+      }),
+    };
+  } catch (error) {
+    console.error("Cloudinary gallery upload error:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Upload failed", details: error.message }),
+    };
+  }
 };
