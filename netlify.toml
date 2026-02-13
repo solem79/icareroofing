@@ -3,7 +3,7 @@
   command = "npm install"
 
 [functions]
-  directory = "functions"
+  directory = "netlify/functions"
 
 [build.environment]
   NETLIFY_USE_YARN = "false"
