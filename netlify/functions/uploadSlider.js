@@ -17,9 +17,8 @@ export const handler = async (event) => {
       };
     }
 
-    // Parse incoming JSON (expects base64 string or URL)
     const data = JSON.parse(event.body);
-    const { image } = data; // image should be base64 or URL
+    const { image } = data;
 
     if (!image) {
       return {
@@ -30,7 +29,7 @@ export const handler = async (event) => {
 
     // Upload to Cloudinary
     const result = await cloudinary.uploader.upload(image, {
-      folder: "slider", // optional: organize uploads in a folder
+      folder: "slider",
     });
 
     return {

@@ -1,7 +1,6 @@
 // netlify/functions/uploadGallery.js
 import { v2 as cloudinary } from "cloudinary";
 
-// Load environment variables
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -17,34 +16,29 @@ export const handler = async (event) => {
       };
     }
 
-    // Parse incoming JSON (expects array of images)
     const data = JSON.parse(event.body);
-    const { images } = data; // images should be an array of base64 strings or URLs
+    const { image } = data;
 
-    if (!images || !Array.isArray(images) || images.length === 0) {
+    if (!image) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: "No images provided" }),
+        body: JSON.stringify({ error: "No image provided" }),
       };
     }
 
-    // Upload all images to Cloudinary
-    const uploadPromises = images.map((img) =>
-      cloudinary.uploader.upload(img, { folder: "gallery" })
-    );
-    const results = await Promise.all(uploadPromises);
-
-    const urls = results.map((res) => res.secure_url);
+    const result = await cloudinary.uploader.upload(image, {
+      folder: "gallery",
+    });
 
     return {
       statusCode: 200,
       body: JSON.stringify({
         success: true,
-        urls,
+        url: result.secure_url,
       }),
     };
   } catch (error) {
-    console.error("Cloudinary gallery upload error:", error);
+    console.error("Cloudinary upload error:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Upload failed", details: error.message }),
