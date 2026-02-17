@@ -29,6 +29,44 @@
     <button type="button" id="uploadBtn">Upload Images</button>
   </form>
 
-  <script src="/js/upload.js"></script>
+  <script src="/js/upload.js"></script> 
+  <!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const supabaseUrl = "https://hcsnwwlukslzoytfnygo.supabase.co";
+
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhjc253d2x1a3Nsem95dGZueWdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMjUxMjEsImV4cCI6MjA4NjkwMTEyMX0.0mhlz6voMx0-xSL6PfhBlUI1fNIC_dbE_GYWSzz7la0";
+
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+async function uploadSlider(imageId, titleId, descId) {
+  const fileInput = document.getElementById(imageId);
+
+  if (!fileInput.files.length) {
+    alert("Select image first");
+    return;
+  }
+
+  const file = fileInput.files[0];
+  const fileName = Date.now() + "-" + file.name;
+
+  const { error } = await supabase.storage
+    .from("uploads")
+    .upload(fileName, file);
+
+  if (error) {
+    console.error(error);
+    alert("Upload failed");
+    return;
+  }
+
+  const imageUrl =
+    supabaseUrl + "/storage/v1/object/public/uploads/" + fileName;
+
+  console.log("Uploaded:", imageUrl);
+  alert("Upload successful!");
+}
+</script>
 </body>
 </html>
