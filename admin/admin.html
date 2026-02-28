@@ -4,69 +4,117 @@
   <meta charset="UTF-8">
   <title>iCare Admin Panel</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    form { margin-bottom: 40px; border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    h1 { text-align: center; }
     .form-group { margin-bottom: 15px; }
-    label { display: block; margin-bottom: 5px; }
-    input[type="text"], textarea, input[type="file"] { width: 100%; padding: 8px; }
-    button { padding: 10px 15px; cursor: pointer; }
+    input, textarea, button { width: 100%; padding: 8px; margin-top: 5px; }
+    button { cursor: pointer; background: #4CAF50; color: white; border: none; }
+    button:hover { background: #45a049; }
   </style>
 </head>
 <body>
-
   <h1>iCare Admin Panel</h1>
 
-  <!-- Slider & Gallery Upload Form -->
-  <h2>Upload Images</h2>
+  <!-- Slider Upload -->
+  <h2>Upload Slider</h2>
+  <div class="form-group">
+    <label>Title:</label>
+    <input type="text" id="sliderTitle" placeholder="Enter slider title" required>
+  </div>
+  <div class="form-group">
+    <label>Description:</label>
+    <textarea id="sliderDesc" placeholder="Enter slider description" required></textarea>
+  </div>
+  <div class="form-group">
+    <label>Choose Image:</label>
+    <input type="file" id="sliderInput" accept="image/*" required>
+  </div>
+  <button type="button" id="sliderUploadBtn">Upload Slider</button>
 
-  <form id="sliderForm">
-    <input type="file" id="imageInput" multiple />
-    <select id="uploadType">
-      <option value="slider">Slider</option>
-      <option value="gallery">Gallery</option>
-    </select>
-    <div id="previewContainer" style="display:flex; gap:10px; margin-top:10px;"></div>
-    <button type="button" id="uploadBtn">Upload Images</button>
-  </form>
+  <hr>
 
-  <script src="/js/upload.js"></script> 
-  <!-- Supabase CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Gallery Upload -->
+  <h2>Upload Gallery Image</h2>
+  <div class="form-group">
+    <label>Title:</label>
+    <input type="text" id="galleryTitle" placeholder="Gallery title">
+  </div>
+  <div class="form-group">
+    <label>Choose Image:</label>
+    <input type="file" id="galleryInput" accept="image/*" required>
+  </div>
+  <button type="button" id="galleryUploadBtn">Upload Gallery Image</button>
 
-<script>
-const supabaseUrl = "https://hcsnwwlukslzoytfnygo.supabase.co";
 
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhjc253d2x1a3Nsem95dGZueWdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMjUxMjEsImV4cCI6MjA4NjkwMTEyMX0.0mhlz6voMx0-xSL6PfhBlUI1fNIC_dbE_GYWSzz7la0";
+  <!-- Supabase JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseUrl = "https://hcsnwwlukslzoytfnygo.supabase.co";
+    const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhjc253d2x1a3Nsem95dGZueWdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMjUxMjEsImV4cCI6MjA4NjkwMTEyMX0.0mhlz6voMx0-xSL6PfhBlUI1fNIC_dbE_GYWSzz7la0";
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    async function uploadToSupabase(fileInputId, type) {
+      const fileInput = document.getElementById(fileInputId);
+      if (!fileInput.files.length) {
+        alert("Select a file first");
+        return;
+      }
 
-async function uploadSlider(imageId, titleId, descId) {
-  const fileInput = document.getElementById(imageId);
+      const file = fileInput.files[0];
+      const fileName = Date.now() + "-" + file.name;
 
-  if (!fileInput.files.length) {
-    alert("Select image first");
-    return;
-  }
+      const { error } = await supabase.storage
+        .from("uploads")
+        .upload(fileName, file);
 
-  const file = fileInput.files[0];
-  const fileName = Date.now() + "-" + file.name;
+      if (error) {
+        console.error(error);
+        alert(`${type} upload failed!`);
+        return;
+      }
 
-  const { error } = await supabase.storage
-    .from("uploads")
-    .upload(fileName, file);
+      const imageUrl = supabaseUrl + "/storage/v1/object/public/uploads/" + fileName;
+      console.log(`${type} URL:`, imageUrl);
+      alert(`${type} uploaded successfully!`);
 
-  if (error) {
-    console.error(error);
-    alert("Upload failed");
-    return;
-  }
+      return imageUrl;
+    }
 
-  const imageUrl =
-    supabaseUrl + "/storage/v1/object/public/uploads/" + fileName;
+    // Slider upload
+    document.getElementById("sliderUploadBtn").addEventListener("click", async () => {
+      const imageUrl = await uploadToSupabase("sliderInput", "Slider");
+      if (!imageUrl) return;
+      const title = document.getElementById("sliderTitle").value;
+      const desc = document.getElementById("sliderDesc").value;
+      console.log("Slider data:", { title, desc, imageUrl });
+      // Save to your DB or JSON here if needed
+    });
 
-  console.log("Uploaded:", imageUrl);
-  alert("Upload successful!");
-}
-</script>
+    // Gallery upload
+    document.getElementById("galleryUploadBtn").addEventListener("click", async () => {
+      const imageUrl = await uploadToSupabase("galleryInput", "Gallery");
+      if (!imageUrl) return;
+      const title = document.getElementById("galleryTitle").value;
+      console.log("Gallery data:", { title, imageUrl });
+      // Save to your DB or JSON here if needed
+    });
+  </script>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 </body>
 </html>
