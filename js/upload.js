@@ -1,5 +1,7 @@
 // js/upload.js
 
+alert("upload.js loaded");
+
 // Supabase client
 const supabaseUrl = "https://hcsnwwlukslzoytfnygo.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhjc253d2x1a3Nsem95dGZueWdvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzEzMjUxMjEsImV4cCI6MjA4NjkwMTEyMX0.0mhlz6voMx0-xSL6PfhBlUI1fNIC_dbE_GYWSzz7la0";
